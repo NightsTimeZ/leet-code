@@ -1,39 +1,49 @@
 import copy
-## bull shit n Queens with  brute force
+
 class Solution:
     def solveNQueens(self, n: int) -> List[List[str]]:
         if n == 1:
             return [["Q"]]
         board = [["."] * n for _ in range(n)]
         def getthehitbox(board, row, col):
-            n = len(board)
-            
-            for i in range(row):
-                if board[i][col] == 'Q':
+            # if col in setblacklist:
+            #     return False
+
+            for i in range(0,row):
+                boardikub = board[i]
+                if boardikub[col] == 'Q':
                     return False
                 j = col - (row - i)
-                if 0 <= j < n and board[i][j] == 'Q':
+                if 0 <= j < n and boardikub[j] == 'Q':
                     return False
                 j2 = col + (row - i)
-                if 0 <= j2 < n and board[i][j2] == 'Q':
+                if 0 <= j2 < n and boardikub[j2] == 'Q':
                     return False
             
             return True
 
         allkeep = {i: [] for i in range(n + 1)}
-        allkeep[0] = [copy.deepcopy(board)]
+        allkeep[0] = [board]
+        formatboard = []
         for w in range(1,n+1):
-            for i in range(0,len(allkeep[w-1])):
+            old_w = w-1
+            if old_w != 0:
+                allkeep[w-2] = []
+                
+            allkeep_old = allkeep[old_w]
+            for i in range(0,len(allkeep_old)):
                 for j in range(0,n):
-                    cloneboard = copy.deepcopy(allkeep[w-1][i])
-                    if getthehitbox(cloneboard,w-1,j):
-                        cloneboard[w-1][j] = "Q"
-                        allkeep[w].append(cloneboard)
-
-        def format_boards(boards):
-            formatted_boards = []
-            for board in boards:
-                formatted_board = [''.join(row) for row in board]
-                formatted_boards.append(formatted_board)
-            return formatted_boards
-        return (format_boards(allkeep[n]))
+                    cloneboard = (allkeep_old[i])
+                    allkeep[w-1] = []
+                    if old_w == 0 or getthehitbox(cloneboard,old_w,j):
+                        if w != n:
+                            cloneboard = copy.deepcopy(cloneboard)
+                        cloneboard[old_w][j] = "Q"
+                        if w == n:
+                            formatboard.append([''.join(row) for row in cloneboard])
+                        else:
+                            allkeep[w].append(cloneboard)
+        
+        allkeep = {}
+        board = []
+        return formatboard
